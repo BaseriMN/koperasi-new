@@ -1,0 +1,83 @@
+<?php
+
+use App\Http\Controllers\AuditReportController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LoanApplicationController;
+use App\Http\Controllers\MeetingController;
+use App\Http\Controllers\ModuleAccessController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SavingController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes — Sistem Pengurusan Koperasi
+|--------------------------------------------------------------------------
+| Akses modul dikawal oleh middleware 'module:<key>' yang membaca matrix
+| dalam DB (jadual module_role). Super-user sentiasa dibenarkan.
+*/
+
+Route::get('/', fn () => redirect()->route('dashboard'));
+
+/*
+| Tetamu
+*/
+Route::middleware('guest')->group(function () {
+    Route::get('login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('login', [AuthController::class, 'login'])->name('login.attempt');
+});
+
+/*
+| Pengguna log masuk
+*/
+Route::middleware('auth')->group(function () {
+
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Pengurusan Ahli
+    Route::middleware('module:pengurusan_ahli')->group(function () {
+        Route::resource('users', UserController::class);
+    });
+
+    // Tetapan Sistem (Peranan, Kebenaran, Akses Modul)
+    Route::middleware('module:tetapan_sistem')->group(function () {
+        Route::resource('roles', RoleController::class)->except(['show']);
+        Route::get('roles/{role}', [RoleController::class, 'show'])->name('roles.show');
+        Route::resource('permissions', PermissionController::class)->except(['show']);
+
+        // Matrix akses modul
+        Route::get('tetapan/modul', [ModuleAccessController::class, 'index'])->name('tetapan.modul');
+        Route::put('tetapan/modul', [ModuleAccessController::class, 'update'])->name('tetapan.modul.update');
+    });
+
+    // Permohonan Pinjaman
+    Route::middleware('module:permohonan_pinjaman')->group(function () {
+        Route::get('pinjaman', [LoanApplicationController::class, 'index'])->name('pinjaman.index');
+        Route::get('pinjaman/create', [LoanApplicationController::class, 'create'])->name('pinjaman.create');
+        Route::post('pinjaman', [LoanApplicationController::class, 'store'])->name('pinjaman.store');
+        Route::post('pinjaman/{loan}/decide', [LoanApplicationController::class, 'decide'])->name('pinjaman.decide');
+    });
+
+    // Simpanan & Saham
+    Route::middleware('module:simpanan_saham')->group(function () {
+        Route::get('simpanan', [SavingController::class, 'index'])->name('simpanan.index');
+        Route::get('simpanan/create', [SavingController::class, 'create'])->name('simpanan.create');
+        Route::post('simpanan', [SavingController::class, 'store'])->name('simpanan.store');
+    });
+
+    // Mesyuarat & Minit
+    Route::middleware('module:mesyuarat_minit')->group(function () {
+        Route::get('mesyuarat', [MeetingController::class, 'index'])->name('mesyuarat.index');
+        Route::get('mesyuarat/create', [MeetingController::class, 'create'])->name('mesyuarat.create');
+        Route::post('mesyuarat', [MeetingController::class, 'store'])->name('mesyuarat.store');
+    });
+
+    // Laporan Audit
+    Route::middleware('module:laporan_audit')->group(function () {
+        Route::get('audit', [AuditReportController::class, 'index'])->name('audit.index');
+    });
+});

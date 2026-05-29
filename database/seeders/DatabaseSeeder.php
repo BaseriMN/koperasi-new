@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,    // 2. Cipta kebenaran & petakan ke peranan
             SuperUserSeeder::class,     // 3. Cipta Super User (Muhamad Baseri)
             ModuleAccessSeeder::class,  // 4. Akses modul lalai bagi setiap peranan
+            //ModuleSeeder::class,        // 5. Cipta modul
         ]);
     }
 }

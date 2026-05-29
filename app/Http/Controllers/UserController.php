@@ -96,7 +96,7 @@ class UserController extends Controller
         $user->roles()->sync($data['roles'] ?? []);
 
         return redirect()->route('users.index')
-            ->with('success', 'Maklumat ahli berjaya dikemaskini.');
+            ->with('success', 'Maklumat staff berjaya dikemaskini.');
     }
 
     public function destroy(User $user)
@@ -109,6 +109,6 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('users.index')
-            ->with('success', 'Ahli berjaya dipadam.');
+            ->with('success', 'Staff berjaya dipadam.');
     }
 }

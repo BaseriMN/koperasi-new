@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
-use App\Models\Saving;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 
 class AuditReportController extends Controller
@@ -14,40 +14,22 @@ class AuditReportController extends Controller
             abort(403);
         }
 
+        $simpananMasuk = (float) Transaction::where('jenis', 'simpanan')->where('arah', 'masuk')->sum('amaun');
+        $simpananKeluar = (float) Transaction::where('jenis', 'simpanan')->where('arah', 'keluar')->sum('amaun');
+        $sahamMasuk = (float) Transaction::where('jenis', 'saham')->where('arah', 'masuk')->sum('amaun');
+        $sahamKeluar = (float) Transaction::where('jenis', 'saham')->where('arah', 'keluar')->sum('amaun');
+
         $stats = [
-            'simpanan'        => Saving::sum('amaun'),
-            'pinjaman_lulus'  => Loan::where('status', 'approved')->sum('amount'),
-            'rekod_simpanan'  => Saving::count(),
-            'rekod_pinjaman'  => Loan::count(),
+            'simpanan'        => $simpananMasuk - $simpananKeluar,
+            'saham'           => $sahamMasuk - $sahamKeluar,
+            'pinjaman_lulus'  => (float) Loan::where('status', 'approved')->sum('amount'),
+            'rekod_transaksi' => Transaction::count(),
             'pinjaman_pending'=> Loan::where('status', 'pending')->count(),
         ];
 
-        
-        // Gabungan rekod untuk jadual audit (simpanan + pinjaman diluluskan)
-        $records = collect();
+        // Lejar terkini untuk jadual audit
+        $records = Transaction::with('member')->latest()->limit(20)->get();
 
-        Saving::with('user')->latest()->limit(10)->get()->each(function ($s) use ($records) {
-            $records->push([
-                'ref'      => 'SAV-' . str_pad($s->id, 4, '0', STR_PAD_LEFT),
-                'kategori' => ucfirst($s->jenis),
-                'amaun'    => $s->amaun,
-                'status'   => 'sah',
-                'tarikh'   => $s->created_at,
-            ]);
-        });
-
-        Loan::with('user')->where('status', 'approved')->latest()->limit(10)->get()->each(function ($l) use ($records) {
-            $records->push([
-                'ref'      => 'LON-' . str_pad($l->id, 4, '0', STR_PAD_LEFT),
-                'kategori' => 'Pinjaman',
-                'amaun'    => $l->amount,
-                'status'   => 'sah',
-                'tarikh'   => $l->reviewed_at ?? $l->created_at,
-            ]);
-        });
-
-        $records = $records->sortByDesc('tarikh')->take(15)->values();
-        
         return view('audit.index', compact('stats', 'records'));
     }
 }

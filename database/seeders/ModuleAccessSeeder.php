@@ -13,12 +13,13 @@ class ModuleAccessSeeder extends Seeder
         // Akses lalai mengikut Module Access Matrix asal.
         // (super-user tidak perlu — sentiasa penuh secara automatik)
         $defaults = [
-            'admin'    => ['pengurusan_ahli', 'simpanan_saham', 'mesyuarat_minit'],
+            'admin'    => ['pengurusan_staff', 'simpanan_saham', 'mesyuarat_minit'],
             'pengurus' => ['permohonan_pinjaman', 'simpanan_saham', 'mesyuarat_minit'],
-            'kerani'   => ['pengurusan_ahli', 'simpanan_saham'],
+            'kerani'   => ['pengurusan_staff', 'simpanan_saham'],
             'jk'       => ['mesyuarat_minit'],
             'auditor'  => ['laporan_audit'],
             'ahli'     => ['permohonan_pinjaman'],
+            'pengurusan_ahli', 'simpanan_saham', 'mesyuarat_minit', 'pengurusan_staff', 'pengurusan_pinjaman', 'pengurusan_akaun', 'pengurusan_transaksi'
         ];
 
         foreach ($defaults as $slug => $modules) {

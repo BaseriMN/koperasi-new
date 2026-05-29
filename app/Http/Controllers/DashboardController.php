@@ -7,6 +7,7 @@ use App\Models\Saving;
 use App\Models\User;
 use App\Support\ModuleAccess;
 use Illuminate\Http\Request;
+use App\Models\Members;
 
 class DashboardController extends Controller
 {
@@ -19,10 +20,12 @@ class DashboardController extends Controller
         $allowedModules = ModuleAccess::allowedFor($user);
 
         $stats = [
-            'ahli'             => User::where('is_active', true)->count(),
+            'staff'             => User::where('is_active', true)->count(),
+            'ahli'             => Members::where('is_active', true)->count(),
             'simpanan'         => Saving::sum('amaun'),
             'pinjaman_pending' => Loan::where('status', 'pending')->count(),
-            'pinjaman_total'   => Loan::sum('amount'),
+            'pinjaman_total'   => Loan::sum('amount'), // data int sebelum pass ke view
+            'pinjaman_approved' => Loan::where('status', 'approved')->count(),
         ];
 
         return view('dashboard', [

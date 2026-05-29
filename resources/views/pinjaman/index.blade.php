@@ -21,7 +21,6 @@
 
 <div class="panel">
     <div class="panel-head"><h3>Senarai Permohonan</h3>
-
         @if ($canApprove)<span class="badge teal">Mod Kelulusan</span>@endif
     </div>
     <table>
@@ -46,23 +45,17 @@
                         @else<span class="badge off"><span class="dot"></span>Ditolak</span>@endif
                     </td>
                     <td style="text-align:right;">
-
-                        {{-- Kalau orang yang mohon tu orang yang tengah login, tulis kat situ "Anda tidak boleh meluluskan permohonan sendiri" --}}
                         @if ($canApprove && $loan->status === 'pending')
-                            @if ($loan->user_id === auth()->id())
-                                <span class="cell-sub">Anda tidak boleh meluluskan permohonan sendiri</span>
-                            @else
-                                <div style="display:inline-flex;gap:8px;">
-                                    <form method="POST" action="{{ route('pinjaman.decide', $loan) }}">
-                                        @csrf <input type="hidden" name="status" value="approved">
-                                        <button class="btn btn-gold btn-sm" type="submit">Lulus</button>
-                                    </form>
-                                    <form method="POST" action="{{ route('pinjaman.decide', $loan) }}" data-confirm="Tolak permohonan ini?">
-                                        @csrf <input type="hidden" name="status" value="rejected">
-                                        <button class="btn btn-danger btn-sm" type="submit">Tolak</button>
-                                    </form>
-                                </div>
-                            @endif
+                            <div style="display:inline-flex;gap:8px;">
+                                <form method="POST" action="{{ route('pinjaman.decide', $loan) }}">
+                                    @csrf <input type="hidden" name="status" value="approved">
+                                    <button class="btn btn-gold btn-sm" type="submit">Lulus</button>
+                                </form>
+                                <form method="POST" action="{{ route('pinjaman.decide', $loan) }}" data-confirm="Tolak permohonan ini?">
+                                    @csrf <input type="hidden" name="status" value="rejected">
+                                    <button class="btn btn-danger btn-sm" type="submit">Tolak</button>
+                                </form>
+                            </div>
                         @else
                             <span class="cell-sub">{{ $loan->reviewer->name ?? '—' }}</span>
                         @endif

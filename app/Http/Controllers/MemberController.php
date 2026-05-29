@@ -1,0 +1,148 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Member;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+class MemberController extends Controller
+{
+    public function index(Request $request)
+    {
+        $members = Member::with(['user', 'nextOfKin'])
+            ->when($request->search, fn ($q, $s) =>
+                $q->where('nama', 'like', "%{$s}%")
+                  ->orWhere('no_ahli', 'like', "%{$s}%")
+                  ->orWhere('no_kp', 'like', "%{$s}%"))
+            ->when($request->status, fn ($q, $st) => $q->where('status', $st))
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('members.index', compact('members'));
+    }
+
+    public function create()
+    {
+        $users      = User::orderBy('name')->get(['id', 'name']);
+        $nextNoAhli = Member::nextNoAhli();   // paparan sahaja (preview)
+
+        return view('members.create', compact('users', 'nextNoAhli'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $this->validateMember($request);
+
+        $member = Member::create([
+            'user_id'       => $data['user_id'] ?? null,
+            'nama'          => $data['nama'],
+            'no_kp'         => $data['no_kp'] ?? null,
+            'telefon'       => $data['telefon'] ?? null,
+            'alamat'        => $data['alamat'] ?? null,
+            'tarikh_sertai' => $data['tarikh_sertai'] ?? now()->toDateString(),
+            'status'        => $data['status'] ?? 'aktif',
+            // no_ahli auto-jana oleh model
+        ]);
+
+        // Simpan waris jika ada
+        if ($request->filled('waris_nama')) {
+            $member->nextOfKin()->create($this->validateWaris($request));
+        }
+
+        return redirect()->route('members.show', $member)
+            ->with('success', "Ahli {$member->no_ahli} berjaya didaftar.");
+    }
+
+    public function show(Member $member)
+    {
+        $member->load(['user', 'nextOfKin', 'ownershipTransfers' => fn ($q) => $q->latest()]);
+
+        $recent = $member->transactions()->with('recorder')->latest()->limit(10)->get();
+
+        $summary = [
+            'saham'    => $member->bakiSaham(),
+            'simpanan' => $member->bakiSimpanan(),
+        ];
+
+        return view('members.show', compact('member', 'recent', 'summary'));
+    }
+
+    public function edit(Member $member)
+    {
+        $member->load('nextOfKin');
+        $users = User::orderBy('name')->get(['id', 'name']);
+
+        return view('members.edit', compact('member', 'users'));
+    }
+
+    public function update(Request $request, Member $member)
+    {
+        $data = $this->validateMember($request, $member);
+
+        $member->update([
+            'user_id'       => $data['user_id'] ?? null,
+            'nama'          => $data['nama'],
+            'no_kp'         => $data['no_kp'] ?? null,
+            'telefon'       => $data['telefon'] ?? null,
+            'alamat'        => $data['alamat'] ?? null,
+            'tarikh_sertai' => $data['tarikh_sertai'] ?? $member->tarikh_sertai,
+            'status'        => $data['status'] ?? $member->status,
+        ]);
+
+        // Kemaskini / cipta waris
+        if ($request->filled('waris_nama')) {
+            $member->nextOfKin()->updateOrCreate(
+                ['member_id' => $member->id],
+                $this->validateWaris($request)
+            );
+        }
+
+        return redirect()->route('members.show', $member)
+            ->with('success', 'Maklumat ahli berjaya dikemaskini.');
+    }
+
+    public function destroy(Member $member)
+    {
+        $no = $member->no_ahli;
+        $member->delete();
+
+        return redirect()->route('members.index')
+            ->with('success', "Ahli {$no} berjaya dipadam.");
+    }
+
+    // ---- Validasi ----
+    private function validateMember(Request $request, ?Member $member = null): array
+    {
+        return $request->validate([
+            'user_id'       => ['nullable', 'exists:users,id'],
+            'nama'          => ['required', 'string', 'max:255'],
+            'no_kp'         => ['nullable', 'string', 'max:20'],
+            'telefon'       => ['nullable', 'string', 'max:20'],
+            'alamat'        => ['nullable', 'string'],
+            'tarikh_sertai' => ['nullable', 'date'],
+            'status'        => ['nullable', Rule::in(['aktif', 'tidak_aktif', 'berhenti'])],
+        ]);
+    }
+
+    private function validateWaris(Request $request): array
+    {
+        $v = $request->validate([
+            'waris_nama'     => ['required', 'string', 'max:255'],
+            'waris_no_kp'    => ['nullable', 'string', 'max:20'],
+            'waris_hubungan' => ['required', 'string', 'max:50'],
+            'waris_telefon'  => ['nullable', 'string', 'max:20'],
+            'waris_alamat'   => ['nullable', 'string'],
+        ]);
+
+        return [
+            'nama'     => $v['waris_nama'],
+            'no_kp'    => $v['waris_no_kp'] ?? null,
+            'hubungan' => $v['waris_hubungan'],
+            'telefon'  => $v['waris_telefon'] ?? null,
+            'alamat'   => $v['waris_alamat'] ?? null,
+        ];
+    }
+}

@@ -19,13 +19,6 @@ class LoanApplicationController extends Controller
             $query->where('user_id', $user->id);
         }
 
-        /*
-        // Kalau orang yang approve loan tu tak boleh orang yang sama
-        if ($user->hasAnyRole(['admin-koperasi', 'super-user'])) {
-            $query->where('user_id', '!=', $user->id);
-        }
-        */
-
         $loans = $query->paginate(15)->withQueryString();
 
         $stats = [

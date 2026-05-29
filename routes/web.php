@@ -5,10 +5,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoanApplicationController;
 use App\Http\Controllers\MeetingController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\ModuleAccessController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SavingController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +42,22 @@ Route::middleware('auth')->group(function () {
     // Pengurusan Ahli
     Route::middleware('module:pengurusan_ahli')->group(function () {
         Route::resource('users', UserController::class);
+
+        // Keahlian (AXXXX) + waris
+        Route::resource('members', MemberController::class);
+
+        // Lejar transaksi saham & simpanan
+        Route::get('transaksi', [TransactionController::class, 'index'])->name('transaksi.index');
+        Route::get('transaksi/create', [TransactionController::class, 'create'])->name('transaksi.create');
+        Route::post('transaksi', [TransactionController::class, 'store'])->name('transaksi.store');
+
+        // Pindah milik saham
+        Route::get('pindah-saham', [TransactionController::class, 'shareTransferForm'])->name('saham.pindah.form');
+        Route::post('pindah-saham', [TransactionController::class, 'shareTransfer'])->name('saham.pindah');
+
+        // Pindah milik keahlian (nombor ahli kekal)
+        Route::get('members/{member}/pindah-milik', [TransactionController::class, 'ownershipTransferForm'])->name('member.pindah.form');
+        Route::post('members/{member}/pindah-milik', [TransactionController::class, 'ownershipTransfer'])->name('member.pindah');
     });
 
     // Tetapan Sistem (Peranan, Kebenaran, Akses Modul)
@@ -62,11 +79,11 @@ Route::middleware('auth')->group(function () {
         Route::post('pinjaman/{loan}/decide', [LoanApplicationController::class, 'decide'])->name('pinjaman.decide');
     });
 
-    // Simpanan & Saham
+    // Simpanan & Saham (lejar transaksi)
     Route::middleware('module:simpanan_saham')->group(function () {
-        Route::get('simpanan', [SavingController::class, 'index'])->name('simpanan.index');
-        Route::get('simpanan/create', [SavingController::class, 'create'])->name('simpanan.create');
-        Route::post('simpanan', [SavingController::class, 'store'])->name('simpanan.store');
+        Route::get('simpanan', [TransactionController::class, 'index'])->name('simpanan.index');
+        Route::get('simpanan/create', [TransactionController::class, 'create'])->name('simpanan.create');
+        Route::post('simpanan', [TransactionController::class, 'store'])->name('simpanan.store');
     });
 
     // Mesyuarat & Minit

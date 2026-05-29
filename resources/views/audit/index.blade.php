@@ -11,25 +11,29 @@
     </button>
 </div>
 <div class="grid grid-3" style="margin-bottom:24px;">
-    <div class="stat"><div class="k">Jumlah Simpanan</div><div class="v" style="font-size:24px;">RM {{ number_format($stats['simpanan'], 0) }}</div><div class="meta">{{ $stats['rekod_simpanan'] }} rekod</div></div>
-    <div class="stat"><div class="k">Pinjaman Diluluskan</div><div class="v" style="font-size:24px;">RM {{ number_format($stats['pinjaman_lulus'], 0) }}</div><div class="meta">{{ $stats['rekod_pinjaman'] }} permohonan</div></div>
-    <div class="stat"><div class="k">Pinjaman Menunggu</div><div class="v">{{ $stats['pinjaman_pending'] }}</div><div class="meta" style="color:var(--gold);">belum diproses</div></div>
+    <div class="stat"><div class="k">Baki Simpanan</div><div class="v" style="font-size:24px;">RM {{ number_format($stats['simpanan'], 0) }}</div><div class="meta">keseluruhan</div></div>
+    <div class="stat"><div class="k">Baki Saham</div><div class="v" style="font-size:24px;">RM {{ number_format($stats['saham'], 0) }}</div><div class="meta">keseluruhan</div></div>
+    <div class="stat"><div class="k">Pinjaman Diluluskan</div><div class="v" style="font-size:24px;">RM {{ number_format($stats['pinjaman_lulus'], 0) }}</div><div class="meta">{{ $stats['pinjaman_pending'] }} menunggu</div></div>
 </div>
 <div class="panel">
-    <div class="panel-head"><h3>Rekod Kewangan</h3><span class="badge gold">Akses Juruaudit</span></div>
+    <div class="panel-head"><h3>Lejar Terkini</h3><span class="badge gold">{{ $stats['rekod_transaksi'] }} rekod transaksi</span></div>
     <table>
-        <thead><tr><th>Rujukan</th><th>Kategori</th><th>Amaun</th><th>Tarikh</th><th>Status</th></tr></thead>
+        <thead><tr><th>Tarikh</th><th>Ahli</th><th>Jenis</th><th>Arah</th><th>Amaun</th><th>Baki</th></tr></thead>
         <tbody>
-            @forelse ($records as $r)
+            @forelse ($records as $t)
                 <tr>
-                    <td style="font-weight:600;">{{ $r['ref'] }}</td>
-                    <td>{{ $r['kategori'] }}</td>
-                    <td>RM {{ number_format($r['amaun'], 2) }}</td>
-                    <td class="cell-sub">{{ optional($r['tarikh'])->translatedFormat('d M Y') }}</td>
-                    <td><span class="badge ok"><span class="dot"></span>Disahkan</span></td>
+                    <td class="cell-sub">{{ $t->created_at->translatedFormat('d M Y') }}</td>
+                    <td>
+                        <div style="font-weight:600;">{{ $t->member->no_ahli ?? '—' }}</div>
+                        <div class="cell-sub">{{ $t->member->nama ?? '' }}</div>
+                    </td>
+                    <td>@if($t->jenis==='saham')<span class="badge gold">Saham</span>@else<span class="badge teal">Simpanan</span>@endif</td>
+                    <td>@if($t->arah==='masuk')<span class="badge ok">Masuk</span>@else<span class="badge off">Keluar</span>@endif</td>
+                    <td style="font-weight:600;">RM {{ number_format($t->amaun, 2) }}</td>
+                    <td class="cell-sub">RM {{ number_format($t->baki, 2) }}</td>
                 </tr>
             @empty
-                <tr><td colspan="5"><div class="empty">
+                <tr><td colspan="6"><div class="empty">
                     <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 13l2.5 2.5L16 10"/></svg>
                     <div>Tiada rekod kewangan untuk diaudit.</div>
                 </div></td></tr>

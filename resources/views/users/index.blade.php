@@ -1,16 +1,16 @@
 @extends('layouts.master')
-@section('title', 'Pengurusan Ahli')
+@section('title', 'Pengurusan Staff')
 @section('crumb', 'Pengurusan')
 
 @section('content')
 <div class="page-head">
     <div>
-        <h1>Pengurusan Ahli</h1>
-        <p class="lead">Senarai semua ahli koperasi dan peranan masing-masing.</p>
+        <h1>Pengurusan Staff</h1>
+        <p class="lead">Senarai semua staff koperasi dan peranan masing-masing.</p>
     </div>
     <a href="{{ route('users.create') }}" class="btn btn-gold">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
-        Tambah Ahli
+        Tambah Staff
     </a>
 </div>
 
@@ -25,12 +25,12 @@
 
 <div class="panel">
     <div class="panel-head">
-        <h3>Senarai Ahli</h3>
-        <span class="badge">{{ $users->total() }} ahli</span>
+        <h3>Senarai Staff</h3>
+        <span class="badge">{{ $users->total() }} staff</span>
     </div>
     <table>
         <thead>
-            <tr><th>Ahli</th><th>Telefon</th><th>Peranan</th><th>Status</th><th style="text-align:right;">Tindakan</th></tr>
+            <tr><th>Staff</th><th>Telefon</th><th>Peranan</th><th>Status</th><th style="text-align:right;">Tindakan</th></tr>
         </thead>
         <tbody>
             @forelse ($users as $u)

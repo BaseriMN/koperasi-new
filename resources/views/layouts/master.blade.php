@@ -279,7 +279,15 @@
             @if ($can('pengurusan_ahli'))
             <a href="{{ route('users.index') }}" class="nav-link {{ $r('users.*') }}">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/></svg>
-                Pengurusan Ahli
+                Pengurusan Staff
+            </a>
+            <a href="{{ route('members.index') }}" class="nav-link {{ $r('members.*') }}">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+                Keahlian (AXXXX)
+            </a>
+            <a href="{{ route('transaksi.index') }}" class="nav-link {{ $r('transaksi.*') }}">
+                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+                Lejar Transaksi
             </a>
             @endif
             @if ($can('permohonan_pinjaman'))

@@ -22,6 +22,7 @@ class AuditReportController extends Controller
             'pinjaman_pending'=> Loan::where('status', 'pending')->count(),
         ];
 
+        
         // Gabungan rekod untuk jadual audit (simpanan + pinjaman diluluskan)
         $records = collect();
 
@@ -46,7 +47,7 @@ class AuditReportController extends Controller
         });
 
         $records = $records->sortByDesc('tarikh')->take(15)->values();
-
+        
         return view('audit.index', compact('stats', 'records'));
     }
 }

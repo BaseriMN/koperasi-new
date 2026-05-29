@@ -17,8 +17,8 @@ return [
 
     'modules' => [
         'pengurusan_ahli' => [
-            'label'        => 'Pengurusan Ahli',
-            'desc'         => 'Daftar & urus ahli koperasi',
+            'label'        => 'Pengurusan Staff',
+            'desc'         => 'Daftar & urus staff koperasi',
             'route'        => 'users.index',
             'route_prefix' => 'users.*',
             'icon'         => '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/>',

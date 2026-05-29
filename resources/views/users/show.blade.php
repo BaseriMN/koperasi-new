@@ -1,6 +1,6 @@
 @extends('layouts.master')
-@section('title', 'Profil Ahli')
-@section('crumb', 'Pengurusan Ahli')
+@section('title', 'Profil Staff')
+@section('crumb', 'Pengurusan Staff')
 
 @section('content')
 <div class="page-head">

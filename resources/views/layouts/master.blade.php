@@ -273,18 +273,23 @@
             </a>
         </div>
 
-        @if ($can('pengurusan_ahli') || $can('permohonan_pinjaman') || $can('simpanan_saham') || $can('mesyuarat_minit') || $can('laporan_audit'))
+
         <div class="nav-group">
             <div class="nav-label">Pengurusan</div>
-            @if ($can('pengurusan_ahli'))
+
+            @if ($can('pengurusan_staff'))
             <a href="{{ route('users.index') }}" class="nav-link {{ $r('users.*') }}">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/></svg>
                 Pengurusan Staff
             </a>
+            @endif
+            @if ($can('pengurusan_member'))
             <a href="{{ route('members.index') }}" class="nav-link {{ $r('members.*') }}">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
                 Keahlian (AXXXX)
             </a>
+            @endif
+            @if ($can('lejar_transaksi'))
             <a href="{{ route('transaksi.index') }}" class="nav-link {{ $r('transaksi.*') }}">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
                 Lejar Transaksi
@@ -296,12 +301,7 @@
                 Permohonan Pinjaman
             </a>
             @endif
-            @if ($can('simpanan_saham'))
-            <a href="{{ route('simpanan.index') }}" class="nav-link {{ $r('simpanan.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v18M7 8h7a3 3 0 010 6H6"/></svg>
-                Simpanan &amp; Saham
-            </a>
-            @endif
+            
             @if ($can('mesyuarat_minit'))
             <a href="{{ route('mesyuarat.index') }}" class="nav-link {{ $r('mesyuarat.*') }}">
                 <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
@@ -315,23 +315,35 @@
             </a>
             @endif
         </div>
-        @endif
+
 
         @if ($can('tetapan_sistem'))
-        <div class="nav-group">
-            <div class="nav-label">Sistem</div>
-            <a href="{{ route('roles.index') }}" class="nav-link {{ $r('roles.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/></svg>
-                Peranan (Roles)
-            </a>
-            <a href="{{ route('permissions.index') }}" class="nav-link {{ $r('permissions.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
-                Kebenaran
-            </a>
-            <a href="{{ route('tetapan.modul') }}" class="nav-link {{ $r('tetapan.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg>
-                Akses Modul
-            </a>
+        <div x-data="{ open: false }" class="nav-group relative">
+            <div class="nav-label cursor-pointer" 
+                @mouseenter="open = true" 
+                @mouseleave="open = false">
+                Sistem ⏷
+            </div>
+            
+            <div x-show="open" 
+                x-transition 
+                @mouseenter="open = true" 
+                @mouseleave="open = false"
+                class="absolute left-0 mt-1 w-56 bg-gray-800 rounded-md shadow-lg z-50"
+                style="display: none;">
+                
+                
+                    <a href="{{ route('roles.index') }}" class="nav-link block px-4 py-2 hover:bg-gray-700">
+                        Peranan (Roles)
+                    </a>
+                    <a href="{{ route('permissions.index') }}" class="nav-link block px-4 py-2 hover:bg-gray-700">
+                        Kebenaran
+                    </a>
+                    <a href="{{ route('tetapan.modul') }}" class="nav-link block px-4 py-2 hover:bg-gray-700">
+                        Akses Modul
+                    </a>
+                
+            </div>
         </div>
         @endif
 

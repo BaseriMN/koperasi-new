@@ -35,10 +35,24 @@
 
 <div class="tiles">
     @forelse ($allowedModules as $mod)
-        @php $m = $moduleMeta[$mod] ?? null; @endphp
+        @php 
+            $m = $moduleMeta[$mod] ?? null;
+            // Handle module dengan params
+            if ($m && isset($m['route_params'])) {
+                $url = route($m['route'], $m['route_params']);
+            } elseif ($m && isset($m['route'])) {
+                $url = route($m['route']);
+            } else {
+                $url = '#';
+            }
+        @endphp
         @if ($m)
-            <a href="{{ route($m['route']) }}" class="tile">
-                <div class="ico"><svg fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">{!! $m['icon'] !!}</svg></div>
+            <a href="{{ $url }}" class="tile">
+                <div class="ico">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.7" viewBox="0 0 24 24">
+                        {!! $m['icon'] !!}
+                    </svg>
+                </div>
                 <h4>{{ $m['label'] }}</h4>
                 <p>{{ $m['desc'] }}</p>
             </a>

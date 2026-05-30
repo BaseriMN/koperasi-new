@@ -16,11 +16,18 @@
 return [
 
     'modules' => [
-        'pengurusan_ahli' => [
+        'pengurusan_staff' => [
             'label'        => 'Pengurusan Staff',
-            'desc'         => 'Daftar & urus staff koperasi',
+            'desc'         => 'Daftar & urus Staff Koperasi',
             'route'        => 'users.index',
             'route_prefix' => 'users.*',
+            'icon'         => '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/>',
+        ],
+        'pengurusan_member' => [
+            'label'        => 'Pengurusan Ahli Koperasi',
+            'desc'         => 'Daftar & urus Ahli Koperasi',
+            'route'        => 'members.index',
+            'route_prefix' => 'members.*',
             'icon'         => '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/>',
         ],
         'permohonan_pinjaman' => [
@@ -30,13 +37,14 @@ return [
             'route_prefix' => 'pinjaman.*',
             'icon'         => '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/>',
         ],
+        /*
         'simpanan_saham' => [
             'label'        => 'Simpanan & Saham',
             'desc'         => 'Rekod transaksi ahli',
             'route'        => 'simpanan.index',
             'route_prefix' => 'simpanan.*',
             'icon'         => '<path d="M12 3v18M7 8h7a3 3 0 010 6H6"/>',
-        ],
+        ],*/
         'mesyuarat_minit' => [
             'label'        => 'Mesyuarat & Minit',
             'desc'         => 'Jadual & minit mesyuarat',

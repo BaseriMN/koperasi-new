@@ -11,10 +11,14 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AccountCategoryController;
+use App\Http\Controllers\AccountEntryController;
+use App\Http\Controllers\AccountReportController;
 use Illuminate\Support\Facades\Route;
 
+
+
 /*
-|--------------------------------------------------------------------------
 | Web Routes — Sistem Pengurusan Koperasi
 |--------------------------------------------------------------------------
 | Akses modul dikawal oleh middleware 'module:<key>' yang membaca matrix
@@ -96,6 +100,36 @@ Route::middleware('auth')->group(function () {
         Route::post('mesyuarat', [MeetingController::class, 'store'])->name('mesyuarat.store');
     });
 
+    // Akaun — Penyata Untung Rugi (TANPA parameter jenis — liputi kedua-dua)
+    Route::middleware('module:akaun')->group(function () {
+        Route::get('akaun/penyata', [AccountReportController::class, 'untungRugi'])->name('akaun.penyata');
+    });
+ 
+    // Akaun — Pendapatan & Perbelanjaan ({jenis} = pendapatan | perbelanjaan)
+    // whereIn mengunci {jenis} kepada dua nilai sah sahaja di peringkat route.
+    Route::middleware('module:akaun')
+        ->prefix('akaun/{jenis}')
+        ->whereIn('jenis', ['pendapatan', 'perbelanjaan'])
+        ->group(function () {
+            // Entri pendapatan/perbelanjaan
+            Route::get('/', [AccountEntryController::class, 'index'])->name('akaun.entri.index');
+            Route::get('entri/create', [AccountEntryController::class, 'create'])->name('akaun.entri.create');
+            Route::post('entri', [AccountEntryController::class, 'store'])->name('akaun.entri.store');
+            Route::get('entri/{entri}/edit', [AccountEntryController::class, 'edit'])->name('akaun.entri.edit');
+            Route::put('entri/{entri}', [AccountEntryController::class, 'update'])->name('akaun.entri.update');
+            Route::delete('entri/{entri}', [AccountEntryController::class, 'destroy'])->name('akaun.entri.destroy');
+ 
+            // Pengurusan kategori dinamik
+            Route::get('kategori', [AccountCategoryController::class, 'index'])->name('akaun.kategori.index');
+            Route::get('kategori/create', [AccountCategoryController::class, 'create'])->name('akaun.kategori.create');
+            Route::post('kategori', [AccountCategoryController::class, 'store'])->name('akaun.kategori.store');
+            Route::get('kategori/{kategori}/edit', [AccountCategoryController::class, 'edit'])->name('akaun.kategori.edit');
+            Route::put('kategori/{kategori}', [AccountCategoryController::class, 'update'])->name('akaun.kategori.update');
+            Route::delete('kategori/{kategori}', [AccountCategoryController::class, 'destroy'])->name('akaun.kategori.destroy');
+    });
+    
+
+    
     // Laporan Audit
     Route::middleware('module:laporan_audit')->group(function () {
         Route::get('audit', [AuditReportController::class, 'index'])->name('audit.index');

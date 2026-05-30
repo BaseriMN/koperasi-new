@@ -39,10 +39,13 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Pengurusan Ahli
-    Route::middleware('module:pengurusan_ahli')->group(function () {
-        Route::resource('users', UserController::class);
+    // Pengurusan Staff
+    Route::middleware('module:pengurusan_staff')->group(function () {
+    Route::resource('users', UserController::class);
+    });
 
+    // Pengurusan Ahli (Keahlian & Waris)
+    Route::middleware('module:pengurusan_member')->group(function () {
         // Keahlian (AXXXX) + waris
         Route::resource('members', MemberController::class);
 

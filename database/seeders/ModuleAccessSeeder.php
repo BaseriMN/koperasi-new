@@ -15,11 +15,10 @@ class ModuleAccessSeeder extends Seeder
         $defaults = [
             'admin'    => ['pengurusan_staff', 'simpanan_saham', 'mesyuarat_minit'],
             'pengurus' => ['permohonan_pinjaman', 'simpanan_saham', 'mesyuarat_minit'],
-            'kerani'   => ['pengurusan_staff', 'simpanan_saham'],
+            'kerani'   => ['pengurusan_staff', 'pengurusan_member', 'simpanan_saham', 'mesyuarat_minit'],
             'jk'       => ['mesyuarat_minit'],
             'auditor'  => ['laporan_audit'],
             'ahli'     => ['permohonan_pinjaman'],
-            'pengurusan_ahli', 'simpanan_saham', 'mesyuarat_minit', 'pengurusan_staff', 'pengurusan_pinjaman', 'pengurusan_akaun', 'pengurusan_transaksi'
         ];
 
         foreach ($defaults as $slug => $modules) {

@@ -24,8 +24,9 @@
                 </div>
                 <p class="cell-sub" style="margin:14px 0;min-height:38px;">{{ $role->description ?? 'Tiada penerangan.' }}</p>
                 <div style="display:flex;gap:8px;">
-                    <a href="{{ route('roles.edit', $role) }}" class="btn btn-ghost btn-sm">Sunting</a>
                     @if ($role->slug !== 'super-user')
+                    <a href="{{ route('roles.edit', $role) }}" class="btn btn-ghost btn-sm">Sunting</a>
+                    
                         <form method="POST" action="{{ route('roles.destroy', $role) }}" data-confirm="Padam peranan {{ $role->name }}?">
                             @csrf @method('DELETE')
                             <button class="btn btn-danger btn-sm" type="submit">Padam</button>

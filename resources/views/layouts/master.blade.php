@@ -52,6 +52,7 @@
             position: sticky; top: 0; height: 100vh;
             display: flex; flex-direction: column;
             border-right: 1px solid rgba(255,255,255,.05);
+            overflow-y: auto;
         }
         .brand { display: flex; align-items: center; gap: 12px; padding: 0 6px 26px; }
         .brand .mark {
@@ -64,8 +65,22 @@
         .brand .name { font-family: 'Fraunces', serif; font-size: 17px; color: #fff; line-height: 1.1; }
         .brand .sub { font-size: 11px; color: var(--gold-soft); letter-spacing: .12em; text-transform: uppercase; }
 
-        .nav-group { margin-top: 10px; }
-        .nav-label { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #5e6f6a; padding: 16px 12px 8px; }
+        .nav-group { margin-top: 4px; }
+
+        /* Tajuk group yang boleh diklik (accordion) */
+        .nav-toggle {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100%; background: none; border: none; cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #5e6f6a;
+            padding: 16px 12px 8px; transition: color .16s;
+        }
+        .nav-toggle:hover { color: #91a09b; }
+        .nav-toggle .chev { width: 13px; height: 13px; transition: transform .22s ease; opacity: .7; }
+        .nav-toggle.open .chev { transform: rotate(180deg); }
+
+        .nav-items { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+
         .nav-link {
             display: flex; align-items: center; gap: 12px;
             padding: 11px 12px; border-radius: 10px;
@@ -244,6 +259,7 @@
             .grid-3, .grid-2, .tiles, .check-grid { grid-template-columns: 1fr; }
             .scrim { position: fixed; inset: 0; background: rgba(12,31,28,.5); z-index: 55; }
         }
+        [x-cloak] { display: none !important; }
     </style>
     @stack('head')
 </head>
@@ -263,86 +279,115 @@
         @php
             $r = fn($p) => request()->routeIs($p) ? 'active' : '';
             $can = fn($key) => auth()->check() && \App\Support\ModuleAccess::userCan(auth()->user(), $key);
+
+            // Tentukan group mana yang patut auto-buka berdasarkan page semasa
+            $inPengurusan = request()->routeIs('users.*','members.*','transaksi.*','pinjaman.*','mesyuarat.*','audit.*');
+            $inAkaun      = request()->routeIs('akaun.*');
+            $inSistem     = request()->routeIs('roles.*','permissions.*','tetapan.*');
         @endphp
 
+        <!-- Utama -->
         <div class="nav-group">
-            <div class="nav-label">Utama</div>
-            <a href="{{ route('dashboard') }}" class="nav-link {{ $r('dashboard') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
-                Dashboard
-            </a>
-        </div>
-
-
-        <div class="nav-group">
-            <div class="nav-label">Pengurusan</div>
-
-            @if ($can('pengurusan_staff'))
-            <a href="{{ route('users.index') }}" class="nav-link {{ $r('users.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/></svg>
-                Pengurusan Staff
-            </a>
-            @endif
-            @if ($can('pengurusan_member'))
-            <a href="{{ route('members.index') }}" class="nav-link {{ $r('members.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
-                Keahlian (AXXXX)
-            </a>
-            @endif
-            @if ($can('lejar_transaksi'))
-            <a href="{{ route('transaksi.index') }}" class="nav-link {{ $r('transaksi.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
-                Lejar Transaksi
-            </a>
-            @endif
-            @if ($can('permohonan_pinjaman'))
-            <a href="{{ route('pinjaman.index') }}" class="nav-link {{ $r('pinjaman.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>
-                Permohonan Pinjaman
-            </a>
-            @endif
-            
-            @if ($can('mesyuarat_minit'))
-            <a href="{{ route('mesyuarat.index') }}" class="nav-link {{ $r('mesyuarat.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
-                Mesyuarat &amp; Minit
-            </a>
-            @endif
-            @if ($can('laporan_audit'))
-            <a href="{{ route('audit.index') }}" class="nav-link {{ $r('audit.*') }}">
-                <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 13l2.5 2.5L16 10"/></svg>
-                Laporan Audit
-            </a>
-            @endif
-        </div>
-
-
-        @if ($can('tetapan_sistem'))
-        <div x-data="{ open: false }" class="nav-group relative">
-            <div class="nav-label cursor-pointer" 
-                @mouseenter="open = true" 
-                @mouseleave="open = false">
-                Sistem ⏷
+            <div class="nav-items">
+                <a href="{{ route('dashboard') }}" class="nav-link {{ $r('dashboard') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+                    Dashboard
+                </a>
             </div>
-            
-            <div x-show="open" 
-                x-transition 
-                @mouseenter="open = true" 
-                @mouseleave="open = false"
-                class="absolute left-0 mt-1 w-56 bg-gray-800 rounded-md shadow-lg z-50"
-                style="display: none;">
-                
-                
-                    <a href="{{ route('roles.index') }}" class="nav-link block px-4 py-2 hover:bg-gray-700">
-                        Peranan (Roles)
-                    </a>
-                    <a href="{{ route('permissions.index') }}" class="nav-link block px-4 py-2 hover:bg-gray-700">
-                        Kebenaran
-                    </a>
-                    <a href="{{ route('tetapan.modul') }}" class="nav-link block px-4 py-2 hover:bg-gray-700">
-                        Akses Modul
-                    </a>
-                
+        </div>
+
+        <!-- Pengurusan -->
+        @if ($can('pengurusan_staff') || $can('pengurusan_member') || $can('lejar_transaksi') || $can('permohonan_pinjaman') || $can('mesyuarat_minit') || $can('laporan_audit'))
+        <div class="nav-group" x-data="{ open: {{ $inPengurusan ? 'true' : 'false' }} }">
+            <button type="button" class="nav-toggle" :class="{ 'open': open }" @click="open = !open">
+                <span>Pengurusan</span>
+                <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="nav-items" x-show="open" x-collapse x-cloak>
+                @if ($can('pengurusan_staff'))
+                <a href="{{ route('users.index') }}" class="nav-link {{ $r('users.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/></svg>
+                    Pengurusan Staff
+                </a>
+                @endif
+                @if ($can('pengurusan_member'))
+                <a href="{{ route('members.index') }}" class="nav-link {{ $r('members.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+                    Keahlian (AXXXX)
+                </a>
+                @endif
+                @if ($can('lejar_transaksi'))
+                <a href="{{ route('transaksi.index') }}" class="nav-link {{ $r('transaksi.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+                    Lejar Transaksi
+                </a>
+                @endif
+                @if ($can('permohonan_pinjaman'))
+                <a href="{{ route('pinjaman.index') }}" class="nav-link {{ $r('pinjaman.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>
+                    Permohonan Pinjaman
+                </a>
+                @endif
+                @if ($can('mesyuarat_minit'))
+                <a href="{{ route('mesyuarat.index') }}" class="nav-link {{ $r('mesyuarat.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+                    Mesyuarat &amp; Minit
+                </a>
+                @endif
+                @if ($can('laporan_audit'))
+                <a href="{{ route('audit.index') }}" class="nav-link {{ $r('audit.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h12l4 4v12H4z"/><path d="M8 13l2.5 2.5L16 10"/></svg>
+                    Laporan Audit
+                </a>
+                @endif
+            </div>
+        </div>
+        @endif
+
+        <!-- Akaun -->
+        @if ($can('akaun'))
+        <div class="nav-group" x-data="{ open: {{ $inAkaun ? 'true' : 'false' }} }">
+            <button type="button" class="nav-toggle" :class="{ 'open': open }" @click="open = !open">
+                <span>Akaun</span>
+                <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="nav-items" x-show="open" x-collapse x-cloak>
+                <a href="{{ route('akaun.entri.index', 'pendapatan') }}" class="nav-link {{ request()->routeIs('akaun.entri.*') && request('jenis')==='pendapatan' ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                    Pendapatan
+                </a>
+                <a href="{{ route('akaun.entri.index', 'perbelanjaan') }}" class="nav-link {{ request()->routeIs('akaun.entri.*') && request('jenis')==='perbelanjaan' ? 'active' : '' }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+                    Perbelanjaan
+                </a>
+                <a href="{{ route('akaun.penyata') }}" class="nav-link {{ $r('akaun.penyata') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 14l3-3 2 2 3-4"/></svg>
+                    Penyata Untung Rugi
+                </a>
+            </div>
+        </div>
+        @endif
+
+        <!-- Sistem -->
+        @if ($can('tetapan_sistem'))
+        <div class="nav-group" x-data="{ open: {{ $inSistem ? 'true' : 'false' }} }">
+            <button type="button" class="nav-toggle" :class="{ 'open': open }" @click="open = !open">
+                <span>Sistem</span>
+                <svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="nav-items" x-show="open" x-collapse x-cloak>
+                <a href="{{ route('roles.index') }}" class="nav-link {{ $r('roles.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3l7 4v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V7z"/></svg>
+                    Peranan (Roles)
+                </a>
+                <a href="{{ route('permissions.index') }}" class="nav-link {{ $r('permissions.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+                    Kebenaran
+                </a>
+                <a href="{{ route('tetapan.modul') }}" class="nav-link {{ $r('tetapan.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg>
+                    Akses Modul
+                </a>
             </div>
         </div>
         @endif
@@ -412,6 +457,8 @@
     </div>
 </div>
 
+<!-- Alpine plugin collapse (untuk animasi buka/tutup) + core -->
+<script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 <script>
     // Confirm before destructive actions
@@ -431,7 +478,6 @@
         });
     }, 4500);
 </script>
-<style>[x-cloak] { display: none !important; }</style>
 @stack('scripts')
 </body>
 </html>

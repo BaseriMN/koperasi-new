@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Loan;
-use App\Models\Saving;
 use App\Models\User;
 use App\Support\ModuleAccess;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Transaction;
+
 
 class DashboardController extends Controller
 {
@@ -19,7 +19,7 @@ class DashboardController extends Controller
         
         // Modul dibenarkan dibaca dari matrix DB (super-user = semua)
         $allowedModules = ModuleAccess::allowedFor($user);
-
+        
         $stats = [
             'staff'             => User::where('is_active', true)->count(),
             'ahli'             => Member::where('status', 'aktif')->count(),

@@ -14,13 +14,13 @@ class MemberController extends Controller
         $members = Member::with(['user', 'nextOfKin'])
             ->when($request->search, fn ($q, $s) =>
                 $q->where('nama', 'like', "%{$s}%")
-                  ->orWhere('no_ahli', 'like', "%{$s}%")
-                  ->orWhere('no_kp', 'like', "%{$s}%"))
+                ->orWhere('no_ahli', 'like', "%{$s}%")
+                ->orWhere('no_kp', 'like', "%{$s}%"))
             ->when($request->status, fn ($q, $st) => $q->where('status', $st))
             ->latest()
             ->paginate(20)
             ->withQueryString();
-
+        
         return view('members.index', compact('members'));
     }
 

@@ -7,7 +7,8 @@ use App\Models\Saving;
 use App\Models\User;
 use App\Support\ModuleAccess;
 use Illuminate\Http\Request;
-use App\Models\Members;
+use App\Models\Member;
+use App\Models\Transaction;
 
 class DashboardController extends Controller
 {
@@ -15,19 +16,20 @@ class DashboardController extends Controller
     {
         $user  = $request->user();
         $roles = $user->roles->pluck('slug')->toArray();
-
+        
         // Modul dibenarkan dibaca dari matrix DB (super-user = semua)
         $allowedModules = ModuleAccess::allowedFor($user);
 
         $stats = [
             'staff'             => User::where('is_active', true)->count(),
-            'ahli'             => Members::where('is_active', true)->count(),
-            'simpanan'         => Saving::sum('amaun'),
+            'ahli'             => Member::where('status', 'aktif')->count(),
+            'simpanan'         => Transaction::where('jenis', 'simpanan')->sum('amaun'),
             'pinjaman_pending' => Loan::where('status', 'pending')->count(),
-            'pinjaman_total'   => Loan::sum('amount'), // data int sebelum pass ke view
+            'pinjaman_total'   => Loan::sum('amount'),
             'pinjaman_approved' => Loan::where('status', 'approved')->count(),
+            'jumlah_saham_terkumpul'  => Transaction::where('jenis', 'saham')->sum('amaun'),
         ];
-
+        
         return view('dashboard', [
             'user'           => $user,
             'roles'          => $roles,

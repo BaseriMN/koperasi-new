@@ -59,6 +59,14 @@ return [
             'route_prefix' => 'audit.*',
             'icon'         => '<path d="M4 4h12l4 4v12H4z"/><path d="M8 13l2.5 2.5L16 10"/>',
         ],
+        'akaun' => [
+            'label'        => 'Akaun',
+            'desc'         => 'Pendapatan & perbelanjaan koperasi',
+            'route'        => 'akaun.entri.index',
+            'route_params' => ['jenis' => 'pendapatan'],
+            'route_prefix' => 'akaun.*',
+            'icon'         => '<path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/><circle cx="16" cy="12" r="1.5" fill="currentColor"/><circle cx="10" cy="18" r="1.5" fill="currentColor"/>',
+        ],
         'tetapan_sistem' => [
             'label'        => 'Tetapan Sistem',
             'desc'         => 'Peranan, kebenaran & akses modul',

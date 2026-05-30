@@ -28,7 +28,7 @@ return [
             'desc'         => 'Daftar & urus Ahli Koperasi',
             'route'        => 'members.index',
             'route_prefix' => 'members.*',
-            'icon'         => '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 6M21 20a4.8 4.8 0 00-4-4.7"/>',
+            'icon'         => '<path d="M12 3L3 9L12 15L21 9L12 3Z"/><path d="M12 15v6"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/>',
         ],
         'permohonan_pinjaman' => [
             'label'        => 'Permohonan Pinjaman',

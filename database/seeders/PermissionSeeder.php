@@ -12,7 +12,7 @@ class PermissionSeeder extends Seeder
     {
         // Senarai kebenaran sistem
         $permissions = [
-            ['name' => 'Urus Staff',          'slug' => 'manage-users',     'description' => 'Tambah, sunting, padam staff'],
+            ['name' => 'Urus Staff',         'slug' => 'manage-users',     'description' => 'Tambah, sunting, padam staff'],
             ['name' => 'Mohon Pinjaman',     'slug' => 'apply-loan',       'description' => 'Hantar permohonan pinjaman'],
             ['name' => 'Lulus Pinjaman',     'slug' => 'approve-loan',     'description' => 'Lulus atau tolak permohonan pinjaman'],
             ['name' => 'Urus Simpanan',      'slug' => 'manage-savings',   'description' => 'Rekod simpanan & saham'],
@@ -34,7 +34,7 @@ class PermissionSeeder extends Seeder
         $map = [
             'admin'    => ['manage-users', 'manage-savings', 'manage-meetings', 'view-meetings'],
             'pengurus' => ['approve-loan', 'manage-savings', 'manage-meetings', 'view-meetings'],
-            'kerani'   => ['manage-users', 'manage-savings'],
+            'kerani'   => ['manage-users', 'manage-savings', 'manage-meetings', 'view-meetings' , 'manage-members'],
             'jk'       => ['view-meetings'],
             'auditor'  => ['view-audit'],
             'ahli'     => ['apply-loan'],

@@ -11,7 +11,7 @@ class Member extends Model
 {
     protected $fillable = [
         'no_ahli', 'user_id', 'nama', 'no_kp',
-        'telefon', 'alamat', 'tarikh_sertai', 'status',
+        'telefon', 'alamat', 'tarikh_sertai', 'is_active',
     ];
 
     protected function casts(): array

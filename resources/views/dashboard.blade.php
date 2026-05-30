@@ -20,11 +20,12 @@
 </div>
 
 <div class="grid grid-3" style="margin-bottom:26px;">
-    <div class="stat"><div class="k">Jumlah Staff</div><div class="v" id="s1" data-target="{{ $stats['ahli'] }}">0</div><div class="meta">▲ aktif dalam sistem</div></div>
-    <div class="stat"><div class="k">Jumlah Ahli</div><div class="v" id="s1" data-target="{{ $stats['ahli'] }}">0</div><div class="meta">▲ aktif dalam sistem</div></div>
-    <div class="stat"><div class="k">Simpanan Terkumpul</div><div class="v">RM <span id="s2" data-target="{{ (int) $stats['simpanan'] }}">0</span></div><div class="meta">▲ keseluruhan koperasi</div></div>
-    <div class="stat"><div class="k">Pinjaman Menunggu</div><div class="v" id="s3" data-target="{{ $stats['pinjaman_pending'] }}">0</div><div class="meta" style="color:var(--gold);">menunggu kelulusan</div></div>
-    <div class="stat"><div class="k">Pinjaman Telah Diluluskan</div><div class="v">RM <span id="s4" data-target="{{ (int) $stats['pinjaman_approved'] }}">0</span></div><div class="meta" style="color:var(--gold);">telah kelulusan</div></div>
+    <div class="stat"><div class="k">Jumlah Staff</div><div class="v" id="s1" data-target="{{ $stats['staff'] }}">0</div><div class="meta">▲ aktif dalam sistem</div></div>
+    <div class="stat"><div class="k">Jumlah Ahli</div><div class="v" id="s2" data-target="{{ $stats['ahli'] }}">0</div><div class="meta">▲ aktif dalam sistem</div></div>
+    <div class="stat"><div class="k">Jumlah Saham Terkumpul</div><div class="v">RM <span id="s3" data-target="{{ (int) $stats['jumlah_saham_terkumpul'] }}">0</span></div><div class="meta">▲ keseluruhan koperasi</div></div>
+    <div class="stat"><div class="k">Simpanan Terkumpul</div><div class="v">RM <span id="s4" data-target="{{ (int) $stats['simpanan'] }}">0</span></div><div class="meta">▲ keseluruhan koperasi</div></div>
+    <div class="stat"><div class="k">Pinjaman Menunggu</div><div class="v" id="s5" data-target="{{ $stats['pinjaman_pending'] }}">0</div><div class="meta" style="color:var(--gold);">menunggu kelulusan</div></div>
+    <div class="stat"><div class="k">Pinjaman Telah Diluluskan</div><div class="v">RM <span id="s6" data-target="{{ (int) $stats['pinjaman_approved'] }}">0</span></div><div class="meta" style="color:var(--gold);">telah kelulusan</div></div>
 </div>
 
 <div class="panel-head" style="border:0;padding:0 0 16px;">
@@ -61,7 +62,7 @@
             el.textContent = Math.floor(cur).toLocaleString('en-MY');
         }, 22);
     }
-    ['s1','s2','s3', 's4'].forEach(id => countTo(document.getElementById(id)));
+    ['s1','s2','s3', 's4', 's5', 's6'].forEach(id => countTo(document.getElementById(id)));
 </script>
 @endpush
 @endsection

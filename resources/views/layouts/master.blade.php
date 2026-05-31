@@ -1,3 +1,18 @@
+@php
+    use App\Models\Setting;
+
+    $palet = Setting::get('tema_palet', config('themes.default'));
+    $mode  = Setting::get('tema_mode', 'light');
+    $themes = config('themes.palettes');
+    // fallback kalau palet tersimpan tak wujud lagi
+    $c = $themes[$palet][$mode] ?? $themes[config('themes.default')]['light'];
+
+    $namaKoperasi = Setting::get('nama_koperasi', 'Koperasi');
+    $namaPendek   = Setting::get('nama_pendek', 'Koperasi');
+    $logoPath     = Setting::get('logo_path', '');
+@endphp
+
+
 <!DOCTYPE html>
 <html lang="ms" x-data="{ sidebarOpen: false, dark: false }" :class="{ 'dark': dark }">
 <head>
@@ -12,22 +27,22 @@
 
     <style>
         :root {
-            --ink: #0c1f1c;
-            --ink-2: #11302b;
-            --panel: #ffffff;
-            --bg: #f4f1ea;
-            --bg-2: #ece7db;
-            --gold: #c0962c;
-            --gold-soft: #e3c976;
-            --teal: #1f6f5c;
-            --teal-deep: #0f433a;
-            --line: #e1dccf;
-            --muted: #7c8783;
-            --danger: #b1402f;
-            --ok: #2f7d54;
-            --shadow: 0 1px 2px rgba(12,31,28,.06), 0 12px 30px -12px rgba(12,31,28,.18);
-            --radius: 14px;
-        }
+                    --ink: {{ $c['ink'] }};
+                    --ink-2: {{ $c['ink-2'] }};
+                    --panel: {{ $c['panel'] }};
+                    --bg: {{ $c['bg'] }};
+                    --bg-2: {{ $c['bg-2'] }};
+                    --gold: {{ $c['gold'] }};
+                    --gold-soft: {{ $c['gold-soft'] }};
+                    --teal: {{ $c['teal'] }};
+                    --teal-deep: {{ $c['teal-deep'] }};
+                    --line: {{ $c['line'] }};
+                    --muted: {{ $c['muted'] }};
+                    --danger: {{ $c['danger'] }};
+                    --ok: {{ $c['ok'] }};
+                    --shadow: 0 1px 2px rgba(0,0,0,.06), 0 12px 30px -12px rgba(0,0,0,.25);
+                    --radius: 14px;
+                }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
         body {
@@ -35,11 +50,9 @@
             background: var(--bg);
             color: var(--ink);
             -webkit-font-smoothing: antialiased;
-            background-image:
-                radial-gradient(circle at 100% 0%, rgba(192,150,44,.07), transparent 40%),
-                radial-gradient(circle at 0% 100%, rgba(31,111,92,.06), transparent 40%);
             min-height: 100vh;
         }
+
         h1,h2,h3,h4 { font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -.01em; }
 
         .app { display: grid; grid-template-columns: 264px 1fr; min-height: 100vh; }
@@ -111,7 +124,7 @@
         .topbar {
             height: 70px; padding: 0 30px;
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(255,255,255,.7); backdrop-filter: blur(12px);
+            background: var(--panel); backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 30;
         }
         .topbar .title-wrap h2 { font-size: 19px; }
@@ -119,7 +132,7 @@
         .top-actions { display: flex; align-items: center; gap: 14px; }
         .icon-btn {
             width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line);
-            background: #fff; cursor: pointer; display: grid; place-items: center; color: var(--ink);
+            background: var(--panel); cursor: pointer; display: grid; place-items: center; color: var(--ink);
             transition: all .16s ease;
         }
         .icon-btn:hover { border-color: var(--gold); color: var(--gold); }
@@ -178,7 +191,7 @@
         }
         tbody td { padding: 15px 22px; border-bottom: 1px solid var(--line); font-size: 14px; }
         tbody tr { transition: background .14s; }
-        tbody tr:hover { background: #faf8f2; }
+        tbody tr:hover { background: var(--bg-2); }
         tbody tr:last-child td { border-bottom: 0; }
         .cell-main { display: flex; align-items: center; gap: 12px; }
         .cell-main .av { width: 34px; height: 34px; border-radius: 9px; background: var(--bg-2); display: grid; place-items: center; font-weight: 600; font-size: 13px; color: var(--teal-deep); }
@@ -207,7 +220,7 @@
         .btn-primary:hover { background: var(--teal-deep); }
         .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-soft) 100%); color: var(--ink); }
         .btn-gold:hover { filter: brightness(1.05); box-shadow: 0 8px 22px -8px rgba(192,150,44,.7); }
-        .btn-ghost { background: #fff; border-color: var(--line); color: var(--ink); }
+        .btn-ghost { background: var(--panel); border-color: var(--line); color: var(--ink); }
         .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
         .btn-danger { background: transparent; color: var(--danger); border-color: rgba(177,64,47,.3); }
         .btn-danger:hover { background: var(--danger); color: #fff; }
@@ -219,7 +232,7 @@
         .field .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
         .input, .select, .textarea {
             width: 100%; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px;
-            font: inherit; font-size: 14px; background: #fff; color: var(--ink); transition: all .16s;
+            font: inherit; font-size: 14px; background: var(--panel); color: var(--ink); transition: all .16s;
         }
         .input:focus, .select:focus, .textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(192,150,44,.15); }
         .textarea { min-height: 110px; resize: vertical; }
@@ -228,7 +241,7 @@
             display: flex; align-items: center; gap: 10px; padding: 11px 14px;
             border: 1px solid var(--line); border-radius: 10px; cursor: pointer; transition: all .14s; font-size: 13.5px;
         }
-        .check:hover { border-color: var(--gold-soft); background: #faf8f2; }
+        .check:hover { border-color: var(--gold-soft); background: var(--bg-2); }
         .check input { accent-color: var(--gold); width: 16px; height: 16px; }
         .form-actions { display: flex; gap: 12px; margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); }
 
@@ -268,11 +281,17 @@
 
     <!-- ===== Sidebar ===== -->
     <aside class="sidebar" :class="{ 'show': sidebarOpen }" id="sidebar">
-        <div class="brand">
-            <div class="mark">K</div>
+            <div class="brand">
+            @if ($logoPath)
+                <div class="mark" style="background:#fff;padding:4px;overflow:hidden;">
+                    <img src="{{ asset('storage/' . $logoPath) }}" alt="Logo" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+            @else
+                <div class="mark">{{ strtoupper(substr($namaPendek, 0, 1)) }}</div>
+            @endif
             <div>
-                <div class="name">Koperasi</div>
-                <div class="sub">CMS Portal</div>
+                <div class="name">{{ $namaPendek }}</div>
+                <div class="sub">{{ \Illuminate\Support\Str::limit($namaKoperasi, 22) }}</div>
             </div>
         </div>
 
@@ -283,7 +302,7 @@
             // Tentukan group mana yang patut auto-buka berdasarkan page semasa
             $inPengurusan = request()->routeIs('users.*','members.*','transaksi.*','pinjaman.*','mesyuarat.*','audit.*');
             $inAkaun      = request()->routeIs('akaun.*');
-            $inSistem     = request()->routeIs('roles.*','permissions.*','tetapan.*');
+            $inSistem     = request()->routeIs('roles.*','permissions.*','tetapan.modul');
         @endphp
 
         <!-- Utama -->
@@ -384,9 +403,13 @@
                     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
                     Kebenaran
                 </a>
-                <a href="{{ route('tetapan.modul') }}" class="nav-link {{ $r('tetapan.*') }}">
+                <a href="{{ route('tetapan.modul') }}" class="nav-link {{ $r('tetapan.modul') }}">
                     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg>
                     Akses Modul
+                </a>
+                <a href="{{ route('tetapan.koperasi') }}" class="nav-link {{ $r('tetapan.koperasi') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>
+                    Tetapan Koperasi
                 </a>
             </div>
         </div>

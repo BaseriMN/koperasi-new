@@ -44,7 +44,7 @@ class TransactionController extends Controller
     {
         $data = $request->validate([
             'member_id'  => ['required', 'exists:members,id'],
-            'jenis'      => ['required', Rule::in(['saham', 'simpanan'])],
+            'jenis'      => ['required', Rule::in(['saham', '-'])],
             'arah'       => ['required', Rule::in(['masuk', 'keluar'])],
             'amaun'      => ['required', 'numeric', 'min:0.01'],
             'rujukan'    => ['nullable', 'string', 'max:50'],

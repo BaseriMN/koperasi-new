@@ -19,7 +19,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') — {{ config('app.name') }}</title>
+    <title>@yield('title', 'Dashboard') — {{ $namaKoperasi }}</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -382,6 +382,10 @@
                 <a href="{{ route('akaun.penyata') }}" class="nav-link {{ $r('akaun.penyata') }}">
                     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M8 14l3-3 2 2 3-4"/></svg>
                     Penyata Untung Rugi
+                </a>
+                <a href="{{ route('akaun.dividen.index') }}" class="nav-link {{ $r('akaun.dividen.*') }}">
+                    <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    Dividen
                 </a>
             </div>
         </div>

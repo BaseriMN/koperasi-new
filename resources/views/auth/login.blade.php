@@ -1,9 +1,17 @@
+@php
+    use App\Models\Setting;
+    $namaPendek   = Setting::get('nama_pendek', 'Koperasi');
+    $namaKoperasi = Setting::get('nama_koperasi', 'Koperasi');
+    $logoPath     = Setting::get('logo_path', '');
+@endphp
+
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Log Masuk — {{ config('app.name') }}</title>
+    <title>Log Masuk — {{ $namaKoperasi }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -56,14 +64,22 @@
 <div class="wrap">
     <div class="hero">
         <div class="hero-brand">
-            <div class="mark">K</div>
-            <div><div class="name">Koperasi</div><div class="sub">CMS Portal</div></div>
+<div class="hero-brand">
+            @if ($logoPath)
+                <div class="mark" style="background:#fff;padding:4px;overflow:hidden;">
+                    <img src="{{ asset('storage/' . $logoPath) }}" alt="Logo" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+            @else
+                <div class="mark">{{ strtoupper(substr($namaPendek, 0, 1)) }}</div>
+            @endif
+            <div><div class="name">{{ $namaPendek }}</div><div class="sub">CMS Portal</div></div>
+        </div>
         </div>
         <div class="hero-mid">
             <h1>Urus koperasi dengan yakin.</h1>
             <p>Portal bersepadu untuk pengurusan ahli, simpanan, pinjaman, mesyuarat dan audit kewangan — semua di satu tempat.</p>
         </div>
-        <div class="hero-foot">© {{ date('Y') }} Sistem Pengurusan Koperasi. Hak cipta terpelihara.</div>
+        <div class="hero-foot">© {{ date('Y') }} {{ $namaKoperasi }}. Hak cipta terpelihara BaseriMN</div>
     </div>
 
     <div class="formside">

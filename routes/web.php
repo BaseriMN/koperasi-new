@@ -16,6 +16,7 @@ use App\Http\Controllers\AccountEntryController;
 use App\Http\Controllers\AccountReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\DividendController;
 
 
 /*
@@ -111,7 +112,19 @@ Route::middleware('auth')->group(function () {
     Route::middleware('module:akaun')->group(function () {
         Route::get('akaun/penyata', [AccountReportController::class, 'untungRugi'])->name('akaun.penyata');
     });
- 
+
+// Dividen
+        Route::get('akaun/dividen', [DividendController::class, 'index'])->name('akaun.dividen.index');
+        Route::get('akaun/dividen/create', [DividendController::class, 'create'])->name('akaun.dividen.create');
+        Route::post('akaun/dividen', [DividendController::class, 'store'])->name('akaun.dividen.store');
+        Route::get('akaun/dividen/{dividen}', [DividendController::class, 'show'])->name('akaun.dividen.show');
+        Route::put('akaun/dividen/{dividen}', [DividendController::class, 'update'])->name('akaun.dividen.update');
+        Route::post('akaun/dividen/{dividen}/tabung', [DividendController::class, 'tambahTabung'])->name('akaun.dividen.tabung.tambah');
+        Route::delete('akaun/dividen/{dividen}/tabung/{tabung}', [DividendController::class, 'buangTabung'])->name('akaun.dividen.tabung.buang');
+        Route::put('akaun/dividen/{dividen}/bahagian/{bahagian}', [DividendController::class, 'overrideSaham'])->name('akaun.dividen.bahagian.override');
+        Route::post('akaun/dividen/{dividen}/muktamad', [DividendController::class, 'muktamad'])->name('akaun.dividen.muktamad');
+        Route::get('akaun/dividen/{dividen}/penyata/{bahagian}', [DividendController::class, 'penyata'])->name('akaun.dividen.penyata');
+
     // Akaun — Pendapatan & Perbelanjaan ({jenis} = pendapatan | perbelanjaan)
     // whereIn mengunci {jenis} kepada dua nilai sah sahaja di peringkat route.
     Route::middleware('module:akaun')

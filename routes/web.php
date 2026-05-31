@@ -15,7 +15,7 @@ use App\Http\Controllers\AccountCategoryController;
 use App\Http\Controllers\AccountEntryController;
 use App\Http\Controllers\AccountReportController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\SettingController;
 
 
 /*
@@ -39,6 +39,13 @@ Route::middleware('guest')->group(function () {
 | Pengguna log masuk
 */
 Route::middleware('auth')->group(function () {
+
+    Route::get('tetapan/modul', [ModuleAccessController::class, 'index'])->name('tetapan.modul');
+    Route::put('tetapan/modul', [ModuleAccessController::class, 'update'])->name('tetapan.modul.update');
+    // Tetapan Koperasi (logo, nama, no pendaftaran, tema)
+    Route::get('tetapan/koperasi', [SettingController::class, 'edit'])->name('tetapan.koperasi');
+    Route::put('tetapan/koperasi', [SettingController::class, 'update'])->name('tetapan.koperasi.update');
+    Route::delete('tetapan/koperasi/logo', [SettingController::class, 'buangLogo'])->name('tetapan.koperasi.logo.buang');
 
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

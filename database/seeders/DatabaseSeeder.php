@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             MemberSampleSeeder::class,       // 7. Ahli + saham + simpanan contoh
             AccountEntrySampleSeeder::class, // 8. Entri pendapatan & perbelanjaan contoh
             //LoanSampleSeeder::class,         // 9. Permohonan pinjaman contoh
-            MeetingSampleSeeder::class,      // 10. Mesyuarat contoh
+            //MeetingSampleSeeder::class,      // 10. Mesyuarat contoh
         ]);
     }
 }

@@ -153,5 +153,6 @@ Route::middleware('auth')->group(function () {
     // Laporan Audit
     Route::middleware('module:laporan_audit')->group(function () {
         Route::get('audit', [AuditReportController::class, 'index'])->name('audit.index');
+        Route::get('audit/export/csv', [AuditReportController::class, 'exportCsv'])->name('audit.export.csv');
     });
 });

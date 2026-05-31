@@ -5,10 +5,16 @@
 @section('content')
 <div class="page-head">
     <div><h1>Laporan Audit</h1><p class="lead">Semakan rekod kewangan koperasi untuk juruaudit.</p></div>
-    <button class="btn btn-ghost" onclick="window.print()">
-        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
-        Cetak
-    </button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="{{ route('audit.export.csv') }}" class="btn btn-ghost">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            Export CSV
+        </a>
+        <button class="btn btn-ghost" onclick="window.print()">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-4a2 2 0 012-2h16a2 2 0 012 2v4a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+            Cetak
+        </button>
+    </div>
 </div>
 <div class="grid grid-3" style="margin-bottom:24px;">
     <div class="stat"><div class="k">Baki Simpanan</div><div class="v" style="font-size:24px;">RM {{ number_format($stats['simpanan'], 0) }}</div><div class="meta">keseluruhan</div></div>

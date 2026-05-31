@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MemberController extends Controller
 {
@@ -22,6 +23,64 @@ class MemberController extends Controller
             ->withQueryString();
         
         return view('members.index', compact('members'));
+    }
+
+    /**
+     * Export ahli ke CSV. Menghormati penapis (search/status) jika ada,
+     * jika tiada penapis ia export SEMUA ahli.
+     */
+    public function exportCsv(Request $request): StreamedResponse
+    {
+        $namaFail = 'senarai-ahli-' . now()->format('Ymd-His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$namaFail}\"",
+        ];
+
+        // Query sama logik dengan index (penapis search + status)
+        $query = Member::with('nextOfKin')
+            ->when($request->search, fn ($q, $s) =>
+                $q->where('nama', 'like', "%{$s}%")
+                  ->orWhere('no_ahli', 'like', "%{$s}%")
+                  ->orWhere('no_kp', 'like', "%{$s}%"))
+            ->when($request->status, fn ($q, $st) => $q->where('status', $st))
+            ->orderBy('no_ahli');
+
+        return response()->streamDownload(function () use ($query) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM UTF-8 untuk Excel
+
+            fputcsv($out, [
+                'No. Ahli', 'Nama', 'No. KP', 'Telefon', 'Status', 'Tarikh Sertai',
+                'Alamat', 'Baki Saham (RM)', 'Baki Simpanan (RM)',
+                'Waris: Nama', 'Waris: Hubungan', 'Waris: No. KP', 'Waris: Telefon', 'Waris: Alamat',
+            ]);
+
+            $query->chunk(300, function ($rows) use ($out) {
+                foreach ($rows as $m) {
+                    $w = $m->nextOfKin;
+                    fputcsv($out, [
+                        $m->no_ahli,
+                        $m->nama,
+                        $m->no_kp ?? '',
+                        $m->telefon ?? '',
+                        ucfirst(str_replace('_', ' ', $m->status)),
+                        optional($m->tarikh_sertai)->format('Y-m-d'),
+                        $m->alamat ?? '',
+                        number_format($m->bakiSaham(), 2, '.', ''),
+                        number_format($m->bakiSimpanan(), 2, '.', ''),
+                        $w->nama ?? '',
+                        $w->hubungan ?? '',
+                        $w->no_kp ?? '',
+                        $w->telefon ?? '',
+                        $w->alamat ?? '',
+                    ]);
+                }
+            });
+
+            fclose($out);
+        }, $namaFail, $headers);
     }
 
     public function create()

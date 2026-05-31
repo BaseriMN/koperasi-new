@@ -29,6 +29,9 @@
                 <option value="simpanan" {{ request('jenis')==='simpanan' ? 'selected' : '' }}>Simpanan</option>
             </select>
             <button class="btn btn-ghost" type="submit">Tapis</button>
+            @if (request('member_id') || request('jenis'))
+                <a href="{{ route('transaksi.index') }}" class="btn btn-ghost">Reset</a>
+            @endif
         </form>
     </div>
 </div>

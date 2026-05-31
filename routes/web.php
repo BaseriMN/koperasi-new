@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     // Pengurusan Ahli (Keahlian & Waris)
     Route::middleware('module:pengurusan_member')->group(function () {
         // Keahlian (AXXXX) + waris
+        Route::get('members/export/csv', [MemberController::class, 'exportCsv'])->name('members.export.csv');
         Route::resource('members', MemberController::class);
 
         // Lejar transaksi saham & simpanan
@@ -133,6 +134,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             // Entri pendapatan/perbelanjaan
             Route::get('/', [AccountEntryController::class, 'index'])->name('akaun.entri.index');
+            Route::get('export/csv', [AccountEntryController::class, 'exportCsv'])->name('akaun.entri.export.csv');
             Route::get('entri/create', [AccountEntryController::class, 'create'])->name('akaun.entri.create');
             Route::post('entri', [AccountEntryController::class, 'store'])->name('akaun.entri.store');
             Route::get('entri/{entri}/edit', [AccountEntryController::class, 'edit'])->name('akaun.entri.edit');

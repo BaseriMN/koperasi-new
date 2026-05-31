@@ -18,7 +18,10 @@
     <div class="panel-body" style="padding:16px 22px;">
         <form method="GET" action="{{ route('users.index') }}" style="display:flex;gap:10px;">
             <input class="input" type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama atau email...">
-            <button class="btn btn-ghost" type="submit">Cari</button>
+            <button class="btn btn-gold" type="submit">Cari</button>
+            @if (request('search') || request('status'))
+                <a href="{{ route('users.index') }}" class="btn btn-ghost">Reset</a>
+            @endif
         </form>
     </div>
 </div>

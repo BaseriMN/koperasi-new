@@ -6,6 +6,7 @@ use App\Models\AccountCategory;
 use App\Models\AccountEntry;
 use App\Models\Member;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AccountEntryController extends Controller
 {
@@ -42,6 +43,58 @@ class AccountEntryController extends Controller
         return view('akaun.entri.index', compact(
             'entries', 'jenis', 'ringkasan', 'jumlahKeseluruhan', 'categories', 'dari', 'hingga'
         ));
+    }
+
+    /**
+     * Export entri (pendapatan/perbelanjaan) ke CSV. Menghormati penapis tarikh & kategori.
+     */
+    public function exportCsv(Request $request, string $jenis): StreamedResponse
+    {
+        $this->guardJenis($jenis);
+
+        $dari   = $request->input('dari');
+        $hingga = $request->input('hingga');
+
+        $namaFail = "akaun-{$jenis}-" . now()->format('Ymd-His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => "attachment; filename=\"{$namaFail}\"",
+        ];
+
+        $query = AccountEntry::where('jenis', $jenis)
+            ->with(['category.parent', 'member'])
+            ->dalamTempoh($dari, $hingga)
+            ->when($request->category_id, fn ($q, $id) => $q->where('category_id', $id))
+            ->orderBy('tarikh')->orderBy('id');
+
+        return response()->streamDownload(function () use ($query) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM UTF-8
+
+            fputcsv($out, [
+                'Tarikh', 'Kategori', 'Kategori Induk', 'Amaun (RM)',
+                'No. Ahli', 'Nama Ahli', 'Penerima/Pembayar', 'Rujukan', 'Keterangan',
+            ]);
+
+            $query->chunk(300, function ($rows) use ($out) {
+                foreach ($rows as $e) {
+                    fputcsv($out, [
+                        optional($e->tarikh)->format('Y-m-d'),
+                        $e->category->nama ?? '',
+                        $e->category->parent->nama ?? '',
+                        number_format((float) $e->amaun, 2, '.', ''),
+                        $e->member->no_ahli ?? '',
+                        $e->member->nama ?? '',
+                        $e->penerima_pembayar ?? '',
+                        $e->rujukan ?? '',
+                        $e->keterangan ?? '',
+                    ]);
+                }
+            });
+
+            fclose($out);
+        }, $namaFail, $headers);
     }
 
     public function create(string $jenis)

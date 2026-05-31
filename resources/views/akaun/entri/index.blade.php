@@ -16,6 +16,10 @@
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <a href="{{ route('akaun.penyata') }}" class="btn btn-ghost">Penyata Untung Rugi</a>
         <a href="{{ route('akaun.kategori.index', $jenis) }}" class="btn btn-ghost">Urus Kategori</a>
+        <a href="{{ route('akaun.entri.export.csv', array_merge(['jenis' => $jenis], request()->only('dari', 'hingga', 'category_id'))) }}" class="btn btn-ghost">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            Export CSV
+        </a>
         <a href="{{ route('akaun.entri.create', $jenis) }}" class="btn btn-gold">
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
             Rekod {{ ucfirst($jenis) }}

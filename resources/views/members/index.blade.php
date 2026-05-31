@@ -8,10 +8,20 @@
         <h1>Keahlian Koperasi</h1>
         <p class="lead">Senarai ahli dengan nombor keahlian, pemilik semasa & status.</p>
     </div>
-    <a href="{{ route('members.create') }}" class="btn btn-gold">
+    <div style="display:flex;gap:10px;align-items:center;">
+        <a href="{{ route('members.export.csv') }}" class="btn btn-ghost">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            Export Semua
+        </a>
+        <a href="{{ route('members.export.csv', request()->only('search', 'status')) }}" class="btn btn-ghost">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 4h18M6 8h12M10 12h4M11 16h2"/></svg>
+            Export (Tapisan)
+        </a>
+        <a href="{{ route('members.create') }}" class="btn btn-gold">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
         Daftar Ahli
     </a>
+    </div>
 </div>
 
 <div class="panel" style="margin-bottom:18px;">
@@ -24,7 +34,10 @@
                 <option value="tidak_aktif" {{ request('status')==='tidak_aktif' ? 'selected' : '' }}>Tidak Aktif</option>
                 <option value="berhenti" {{ request('status')==='berhenti' ? 'selected' : '' }}>Berhenti</option>
             </select>
-            <button class="btn btn-ghost" type="submit">Cari</button>
+            <button class="btn btn-gold" type="submit">Cari</button>
+            @if (request('search') || request('status'))
+                <a href="{{ route('members.index') }}" class="btn btn-ghost">Reset</a>
+            @endif
         </form>
     </div>
 </div>
